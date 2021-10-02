@@ -2,19 +2,23 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
 const BarChart = ({ entries = [] }) => {
-  const {labels, counts } = entries
-    .sort((a,b) => new Date(a.date) - new Date(b.date))
-    .reduce((acc, cur) => {
-      acc.labels.push(cur.date)
-      acc.counts.push(cur.count)
-      return acc
-    }, {labels: [], counts: []})
+  const { labels, counts } = entries
+    .sort((a, b) => new Date(a.date) - new Date(b.date))
+    .reduce(
+      (acc, cur) => {
+        acc.labels.push(cur.date);
+        acc.counts.push(cur.count);
+        return acc;
+      },
+      { labels: [], counts: [] }
+    );
 
+  const totalCount = counts.reduce((a, b) => parseInt(a) + parseInt(b));
   const data = {
     labels,
     datasets: [
       {
-        label: '',
+        label: `Total count for week is ${totalCount}`,
         data: counts,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
@@ -60,12 +64,14 @@ const BarChart = ({ entries = [] }) => {
     },
   };
 
-  return  (<>
+  return (
+    <>
       <div className="header">
         <h1 className="title">Weekly Progress Dashboard</h1>
       </div>
       <Bar data={data} options={options} />
-    </>)
+    </>
+  );
 };
 
 export default BarChart;

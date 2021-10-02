@@ -17,6 +17,7 @@ const Home = () => {
   const history = useHistory();
   const { authState } = useOktaAuth();
   const { foodsList, doFoodsSearch } = useFoods();
+  const [totalCount, setTotalCount] = React.useState(null);
   useAuth();
 
   if (authState && !authState.isAuthenticated) {
@@ -34,6 +35,7 @@ const Home = () => {
       axios.get('/api/entry').then(({ data: { entries } }) => {
         setEntries(entries);
       });
+      fetchDashboardData();
     }
   }, [authState]);
 
@@ -81,6 +83,16 @@ const Home = () => {
 
   const login = async () => history.push('/login');
 
+  // React.useEffect(() => {
+  //   if (authState?.isAuthenticated) fetchDashboardData();
+  // }, [authState]);
+
+  const fetchDashboardData = async () => {
+    const { data } = await axios.get('/api/dashboard');
+    const totalCount = data.reduce((acc, cur) => acc + parseInt(cur.count), 0);
+    setTotalCount(totalCount);
+  };
+
   return (
     <div>
       {/* <Link to="/protected">Protected</Link> */}
@@ -114,6 +126,7 @@ const Home = () => {
         </div>
         <div className="grid-item-2">
           <Thermometer entries={entries} />
+          <p> Score for the week: {totalCount}</p>
         </div>
         <div className="grid-item-3">
           <EntryList entries={entries} deleteEntry={handleDeleteEntry} />
